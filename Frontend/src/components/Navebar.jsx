@@ -50,9 +50,9 @@ const Navebar = () => {
       variants={navbarVariants}
       initial="hidden"
       animate="visible"
-      className="flex justify-between items-center py-5 font-medium"
+      className="flex justify-between items-center py-5 font-medium px-4 md:px-10"
     >
-      <img src={assets.logo} alt="logo" />
+      <img src={assets.logo} alt="logo" className="h-8 sm:h-10" />
       <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
         <NavLink to={"/"} className="flex flex-col items-center gap-1">
           <p>HOME</p>
@@ -74,6 +74,7 @@ const Navebar = () => {
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
       </ul>
+
       <div className="flex items-center gap-6">
         <img src={assets.search_icon} alt="" className="w-5 cursor-pointer" />
         <div className="group relative">
@@ -91,12 +92,11 @@ const Navebar = () => {
           </div>
         </div>
         <Link to={"/cart"} className="relative">
-          <img src={assets.cart_icon} alt="" className="w-5 min-w-5 " />
+          <img src={assets.cart_icon} alt="" className="w-5 min-w-5" />
           <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 rounded-full bg-black text-white aspect-square text-[8px]">
             10
           </p>
         </Link>
-
         <img
           onClick={() => setVisible(true)}
           src={assets.menu_icon}
@@ -133,7 +133,6 @@ const Navebar = () => {
               HOME
             </NavLink>
           </motion.div>
-
           <motion.div
             variants={linkVariants}
             initial="hidden"
@@ -145,7 +144,6 @@ const Navebar = () => {
               COLLECTION
             </NavLink>
           </motion.div>
-
           <motion.div
             variants={linkVariants}
             initial="hidden"
@@ -157,7 +155,6 @@ const Navebar = () => {
               ABOUT
             </NavLink>
           </motion.div>
-
           <motion.div
             variants={linkVariants}
             initial="hidden"
