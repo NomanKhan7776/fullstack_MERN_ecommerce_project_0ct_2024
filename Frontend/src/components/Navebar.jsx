@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { Link, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const Navebar = () => {
+const Navbar = () => {
+  const [isSticky, setIsSticky] = useState(false);
   const [visible, setVisible] = useState(false);
 
-  // Framer Motion variants for the navbar animation
+  // Framer Motion variants for the navbar sticky animation
   const navbarVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    initial: { opacity: 1, scale: 1 },
+    sticky: { opacity: 0.9, scale: 0.95, transition: { duration: 0.3 } },
   };
 
   // Framer Motion variants for the sidebar animation
@@ -38,26 +39,55 @@ const Navebar = () => {
     hidden: { opacity: 0, x: -50 },
     visible: { opacity: 1, x: 0 },
     hover: {
-      scale: 1.05,
+      scale: 1.04,
       backgroundColor: "#333",
       color: "#fff",
       transition: { duration: 0.3 },
     },
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 64) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Lock scroll when sidebar is visible
+  useEffect(() => {
+    if (visible) {
+      document.body.classList.add("scroll-lock");
+    } else {
+      document.body.classList.remove("scroll-lock");
+    }
+  }, [visible]);
+
   return (
     <motion.div
       variants={navbarVariants}
-      initial="hidden"
-      animate="visible"
-      className="flex justify-between items-center py-5 font-medium px-4 md:px-10"
+      animate={isSticky ? "sticky" : "initial"}
+      className={` z-50 flex justify-between items-center py-5 font-medium px-4 md:px-10 bg-white ${
+        isSticky ? "fixed top-0 left-0 right-0" : "relative"
+      }`}
     >
-      <img src={assets.logo} alt="logo" className="h-8 sm:h-10" />
+      <Link to={"/"}>
+        <img src={assets.logo} alt="logo" className="h-8 sm:h-10" />
+      </Link>
       <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
         <NavLink to={"/"} className="flex flex-col items-center gap-1">
           <p>HOME</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
+
         <NavLink
           to={"/collection"}
           className="flex flex-col items-center gap-1"
@@ -65,6 +95,7 @@ const Navebar = () => {
           <p>COLLECTION</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
+
         <NavLink to={"/about"} className="flex flex-col items-center gap-1">
           <p>ABOUT</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
@@ -110,12 +141,12 @@ const Navebar = () => {
         variants={sidebarVariants}
         initial="closed"
         animate={visible ? "open" : "closed"}
-        className="fixed top-0 right-0 bottom-0 bg-white overflow-hidden z-50"
+        className="fixed top-0 right-0 bottom-0 bg-white z-50"
       >
         <div className="flex flex-col text-gray-600 h-full">
           <div
             onClick={() => setVisible(false)}
-            className="flex items-center gap-4 p-3 cursor-pointer"
+            className="flex items-center gap-3 p-3 px-5 cursor-pointer"
           >
             <img src={assets.dropdown_icon} className="h-4 rotate-180" alt="" />
             <p>Back</p>
@@ -127,9 +158,19 @@ const Navebar = () => {
             initial="hidden"
             animate="visible"
             whileHover="hover"
-            className="py-2 pl-6 border"
+            className={`py-2 pl-8 border`}
           >
-            <NavLink onClick={() => setVisible(false)} to={"/"}>
+            <NavLink
+              className={({ isActive }) =>
+                `${
+                  isActive
+                    ? "block rounded-tl-lg rounded-bl-lg  pl-8 w-full bg-[#333] text-white"
+                    : ""
+                }`
+              }
+              onClick={() => setVisible(false)}
+              to={"/"}
+            >
               HOME
             </NavLink>
           </motion.div>
@@ -138,9 +179,19 @@ const Navebar = () => {
             initial="hidden"
             animate="visible"
             whileHover="hover"
-            className="py-2 pl-6 border"
+            className="py-2 pl-8 border"
           >
-            <NavLink onClick={() => setVisible(false)} to={"/collection"}>
+            <NavLink
+              className={({ isActive }) =>
+                `${
+                  isActive
+                    ? "block rounded-tl-lg rounded-bl-lg  pl-8 w-full bg-[#333] text-white"
+                    : ""
+                }`
+              }
+              onClick={() => setVisible(false)}
+              to={"/collection"}
+            >
               COLLECTION
             </NavLink>
           </motion.div>
@@ -149,9 +200,19 @@ const Navebar = () => {
             initial="hidden"
             animate="visible"
             whileHover="hover"
-            className="py-2 pl-6 border"
+            className="py-2 pl-8 border"
           >
-            <NavLink onClick={() => setVisible(false)} to={"/about"}>
+            <NavLink
+              className={({ isActive }) =>
+                `${
+                  isActive
+                    ? "block rounded-tl-lg rounded-bl-lg pl-8 w-full bg-[#333] text-white"
+                    : ""
+                }`
+              }
+              onClick={() => setVisible(false)}
+              to={"/about"}
+            >
               ABOUT
             </NavLink>
           </motion.div>
@@ -160,9 +221,19 @@ const Navebar = () => {
             initial="hidden"
             animate="visible"
             whileHover="hover"
-            className="py-2 pl-6 border"
+            className="py-2 pl-8 border"
           >
-            <NavLink onClick={() => setVisible(false)} to={"/contact"}>
+            <NavLink
+              className={({ isActive }) =>
+                `${
+                  isActive
+                    ? "block rounded-tl-lg rounded-bl-lg  pl-8 w-full bg-[#333] text-white"
+                    : ""
+                }`
+              }
+              onClick={() => setVisible(false)}
+              to={"/contact"}
+            >
               CONTACT
             </NavLink>
           </motion.div>
@@ -172,4 +243,4 @@ const Navebar = () => {
   );
 };
 
-export default Navebar;
+export default Navbar;
