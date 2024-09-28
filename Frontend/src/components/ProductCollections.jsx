@@ -2,26 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import Title from "./Title";
 import ProductItem from "./ProductItem";
+import { containerVariants, itemVariants } from "../animations/animationVariants";
 
 const ProductCollections = ({ Collection = [], text1 = "", text2 = "" }) => {
-  // Framer Motion Variants for animation
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        staggerChildren: 0.2,
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+ 
 
   return (
     <div className="mt-10 mb-12">
