@@ -6,11 +6,35 @@ import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
 const Collection = () => {
-  const { products } = useContext(ShopContext);
+  const { products, search } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [category, setCategory] = useState([]);
   const [filterProducts, setFilterProducts] = useState(products);
+  const [subCategory, setSubcategory] = useState([]);
+  const [sortType, setSortType] = useState("relavent");
 
+  const sortingPrice = (productsToSort) => {
+    let sortedProducts = [...productsToSort];
+    switch (sortType) {
+      case "low-high":
+        sortedProducts = sortedProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "high-low":
+        sortedProducts = sortedProducts.sort((a, b) => b.price - a.price);
+        break;
+      case "relavent":
+      default:
+        return sortedProducts;
+    }
+    return sortedProducts;
+  };
+  const filterSubCategory = (e) => {
+    if (subCategory.includes(e.target.value)) {
+      setSubcategory((pre) => pre.filter((item) => item !== e.target.value));
+    } else {
+      setSubcategory((pre) => [...pre, e.target.value]);
+    }
+  };
   const filterCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -19,14 +43,25 @@ const Collection = () => {
     }
   };
   useEffect(() => {
-    if (category.length === 0) {
-      setFilterProducts(products);
-    } else {
-      setFilterProducts(
-        products.filter((product) => category.includes(product.category))
+    let filtered = products;
+    if (category.length > 0) {
+      filtered = filtered.filter((product) =>
+        category.includes(product.category)
       );
     }
-  }, [category, products]);
+    if (subCategory.length > 0) {
+      filtered = filtered.filter((product) =>
+        subCategory.includes(product.subCategory)
+      );
+    }
+    if (search) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    filtered = sortingPrice(filtered);
+    setFilterProducts(filtered);
+  }, [category, products, subCategory, search, sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
@@ -91,15 +126,30 @@ const Collection = () => {
           <p className="mb-3 text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value={"Topwear"} />{" "}
+              <input
+                className="w-3"
+                type="checkbox"
+                value={"Topwear"}
+                onChange={filterSubCategory}
+              />{" "}
               Topwear
             </p>
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value={"Bottomwear"} />{" "}
+              <input
+                className="w-3"
+                type="checkbox"
+                value={"Bottomwear"}
+                onChange={filterSubCategory}
+              />{" "}
               Bottomwear
             </p>
             <p className="flex gap-2">
-              <input className="w-3" type="checkbox" value={"Winterwear"} />{" "}
+              <input
+                className="w-3"
+                type="checkbox"
+                value={"Winterwear"}
+                onChange={filterSubCategory}
+              />{" "}
               Winterwear
             </p>
           </div>
@@ -110,7 +160,10 @@ const Collection = () => {
         <div className="flex justify-between text-base sm:text-2xl mb-4">
           <Title text1={"ALL"} text2={"COLLECTIONS"} />
           {/* product sort */}
-          <select className="border-2 border-gray-300 text-sm px-2">
+          <select
+            onChange={(e) => setSortType(e.target.value)}
+            className="border-2 border-gray-300 text-sm px-2"
+          >
             <option value="relavent">Sort by: Relavent</option>
             <option value="low-high">Sort by: Low to High</option>
             <option value="high-low">Sort by: High to Low</option>
