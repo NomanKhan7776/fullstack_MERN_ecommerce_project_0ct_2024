@@ -17,6 +17,9 @@ a.active hr {
   font-style: normal;
 }
 
+/* ::-webkit-scrollbar {
+  display: none;
+} */
 .scroll-lock {
   overflow: hidden;
 }
