@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
+import CartTotal from "../components/CartTotal";
 const Cart = () => {
-  const { products, cartItems, currency, removeFromCart } =
+  const { products, cartItems, currency, updateOrRemoveFromCart } =
     useContext(ShopContext);
+  const navigate = useNavigate();
   const [cartProducts, setCartProducts] = useState([]);
   useEffect(() => {
     let tempData = [];
@@ -66,13 +69,22 @@ const Cart = () => {
                   </div>
                 </div>
                 <input
+                  onChange={(e) =>
+                    e.target.value === "" || e.target.value === "0"
+                      ? null
+                      : updateOrRemoveFromCart(
+                          item._id,
+                          item.size,
+                          Number(e.target.value)
+                        )
+                  }
                   className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
                   type="number"
                   min={1}
                   defaultValue={item.quantity}
                 />
                 <img
-                  onClick={() => removeFromCart(item._id, item.size)}
+                  onClick={() => updateOrRemoveFromCart(item._id, item.size, 0)}
                   className="w-4 mr-4 sm:w-5 cursor-pointer"
                   src={assets.bin_icon}
                   alt=""
@@ -83,6 +95,19 @@ const Cart = () => {
         ) : (
           <p>There is no Item In the cart</p>
         )}
+      </div>
+      <div className="flex justify-end my-20">
+        <div className="w-full sm:w-[450px]">
+          <CartTotal />
+          <div className="w-full text-end">
+            <button
+              onClick={() => navigate("/place-order")}
+              className="bg-black text-white text-sm my-8 px-8 py-3"
+            >
+              PROCEED TO CHECKOUT
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

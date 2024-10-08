@@ -11,7 +11,7 @@ export const containerVariants = {
 };
 
 export const itemVariants = {
-  hidden: { opacity: 0, y: 50 }, // Removed y translation
+  hidden: { opacity: 0, y: 50 }, 
   visible: {
     opacity: 1,
     transition: { duration: 0.5 },
