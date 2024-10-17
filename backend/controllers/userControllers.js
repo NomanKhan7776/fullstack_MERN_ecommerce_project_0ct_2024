@@ -64,7 +64,21 @@ const registerUser = async (req, res) => {
 
 //route for adminlogin
 const adminLogin = async (req, res) => {
-  res.status(200).json({ msg: "admin api working" });
+  try {
+    const { email, password } = req.body;
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = await jwt.sign(email + password, process.env.JWT_SECRET);
+      res.status(200).json({ success: true, token });
+    } else {
+      res.status(404).json({ success: false, message: "invalid credintials" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.send({ success: false, message: error.message });
+  }
 };
 
 export { loginUser, registerUser, adminLogin };
