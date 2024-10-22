@@ -1,0 +1,75 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+jspm_packages/
+client/node_modules/
+
+# dotenv environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# MongoDB related files
+*.lock
+dump/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE and editor-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Build artifacts
+dist/
+build/
+public/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage reports from testing
+coverage/
+
+# pm2 log files and process files
+pm2-logs/
+pids/
+*.pid
+
+# Miscellaneous
+*.swp
+*.bak
+*.orig
+*.rej
+
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Database configuration files (if any)
+mongo-data/
+
+# ESLint cache files
+.eslintcache
+
+# npm package-lock file (optional, depending on team preferences)
+# package-lock.json
+
+# Yarn lock file (optional)
+# yarn.lock
