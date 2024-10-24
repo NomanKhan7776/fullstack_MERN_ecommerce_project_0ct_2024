@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
+import axios from "axios";
 const Login = () => {
-  const [currentState, setCurrentState] = useState("Sign Up");
+  const [currentState, setCurrentState] = useState("Login");
+  const { token, setToken, backendUrl } = useContext(ShopContext);
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -10,14 +16,50 @@ const Login = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      if (currentState === "Sign Up") {
+        const response = await axios.post(
+          `${backendUrl}/api/user/register`,
+          data
+        );
+        if (response.data.success) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+        }
+        reset();
+      } else {
+        const response = await axios.post(`${backendUrl}/api/user/login`, data);
+        if (response.data.success) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+          reset();
+        } else {
+          toast.error();
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        toast.error(error.response.data.message);
+      } else if (error.response && error.response.status === 404) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+        console.error(error);
+      }
+    }
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
 
   const showErrorToast = (message) => {
     toast.error(message, {
       position: "top-center",
-      autoClose: 3000,
+      autoClose: 2000,
     });
   };
 
@@ -77,8 +119,8 @@ const Login = () => {
           {...register("password", {
             required: "Password is required",
             minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
+              value: 8,
+              message: "Password must be at least 8 characters",
             },
           })}
         />

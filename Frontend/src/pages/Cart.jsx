@@ -10,27 +10,29 @@ const Cart = () => {
   const navigate = useNavigate();
   const [cartProducts, setCartProducts] = useState([]);
   useEffect(() => {
-    let tempData = [];
-    for (const productId in cartItems) {
-      for (const size in cartItems[productId]) {
-        if (cartItems[productId][size] > 0) {
-          const existantProduct = tempData.find(
-            (item) => item._id === productId && item.size === size
-          );
-          if (existantProduct) {
-            existantProduct.quantity += cartItems[productId][size];
-          } else {
-            tempData.push({
-              _id: productId,
-              size: size,
-              quantity: cartItems[productId][size],
-            });
+    if (products.length > 0) {
+      let tempData = [];
+      for (const productId in cartItems) {
+        for (const size in cartItems[productId]) {
+          if (cartItems[productId][size] > 0) {
+            const existantProduct = tempData.find(
+              (item) => item._id === productId && item.size === size
+            );
+            if (existantProduct) {
+              existantProduct.quantity += cartItems[productId][size];
+            } else {
+              tempData.push({
+                _id: productId,
+                size: size,
+                quantity: cartItems[productId][size],
+              });
+            }
           }
         }
       }
+      setCartProducts(tempData);
     }
-    setCartProducts(tempData);
-  }, [cartItems]);
+  }, [cartItems, products]);
   return (
     <div className="border-t pt-14 ">
       <div className="text-2xl mb-3">
@@ -96,19 +98,23 @@ const Cart = () => {
           <p>There is no Item In the cart</p>
         )}
       </div>
-      <div className="flex justify-end my-20">
-        <div className="w-full sm:w-[450px]">
-          <CartTotal />
-          <div className="w-full text-end">
-            <button
-              onClick={() => navigate("/place-order")}
-              className="bg-black text-white text-sm my-8 px-8 py-3"
-            >
-              PROCEED TO CHECKOUT
-            </button>
+      {cartProducts.length > 0 ? (
+        <div className="flex justify-end my-20">
+          <div className="w-full sm:w-[450px]">
+            <CartTotal />
+            <div className="w-full text-end">
+              <button
+                onClick={() => navigate("/place-order")}
+                className="bg-black text-white text-sm my-8 px-8 py-3"
+              >
+                PROCEED TO CHECKOUT
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
