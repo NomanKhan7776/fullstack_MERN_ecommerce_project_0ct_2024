@@ -81,10 +81,29 @@ const Add = ({ token }) => {
         formData,
         { headers: { token } }
       );
-
-      console.log(response.data);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setForm({
+          name: "",
+          description: "",
+          price: "",
+          category: "Men",
+          subCategory: "Topwear",
+          sizes: [],
+          bestSeller: false,
+        });
+        setImages({
+          image1: null,
+          image2: null,
+          image3: null,
+          image4: null,
+        });
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.log(error);
+      toast.error(error.message);
     }
   };
 
