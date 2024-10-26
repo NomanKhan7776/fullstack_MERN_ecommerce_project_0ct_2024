@@ -18,21 +18,26 @@ const ShopContextProvider = (props) => {
     if (!size) return toast.error("Please select a size before adding to cart");
     try {
       setCartItems((currentCartItems) =>
+        // produce(currentCartItems, (draft) => {
+        //   if (!draft[productId]) {
+        //     draft[productId] = {};
+        //   }
+        //   if (!draft[productId][size]) {
+        //     draft[productId][size] = 0;
+        //   }
+        //   draft[productId][size] += 1;
+        // })
         produce(currentCartItems, (draft) => {
-          if (!draft[productId]) {
-            draft[productId] = {};
-          }
-          if (!draft[productId][size]) {
-            draft[productId][size] = 0;
-          }
-          draft[productId][size] += 1;
+          if (!draft[productId]) draft[productId] = {};
+          draft[productId][size] = (draft[productId][size] || 0) + 1;
         })
       );
+
       if (token) {
         try {
           await axios.post(
             `${backendUrl}/api/cart/add`,
-            { productId, size },
+            { productId, size, quantity: 1 },
             { headers: { token } }
           );
         } catch (error) {
@@ -84,22 +89,33 @@ const ShopContextProvider = (props) => {
 
   const cartTotal = () => {
     let totalAmount = 0;
+
     for (const productId in cartItems) {
+      // Find the product in the products array
       let cartProduct = products.find((item) => item._id === productId);
+
+      // Check if the product exists
       if (!cartProduct) {
         console.warn(`Product with id ${productId} not found.`);
-        continue;
+        continue; // Skip this product if not found
       }
+
+      // Loop through sizes and calculate the total amount
       for (const size in cartItems[productId]) {
         try {
           const quantity = cartItems[productId][size];
-          if (typeof quantity === "number" && quantity > 0)
+          if (typeof quantity === "number" && quantity > 0) {
             totalAmount += cartProduct.price * quantity;
+          }
         } catch (error) {
-          console.error(error);
+          console.error(
+            `Error calculating total for product ${productId} and size ${size}:`,
+            error
+          );
         }
       }
     }
+
     return totalAmount;
   };
 
@@ -144,7 +160,7 @@ const ShopContextProvider = (props) => {
     if (!token && localStorage.getItem("token"))
       setToken(localStorage.getItem("token"));
     getUserCart(localStorage.getItem("token"));
-  }, []);
+  }, [token]);
 
   const value = {
     products,
